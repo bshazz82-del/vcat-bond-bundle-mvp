@@ -21,7 +21,6 @@ else:
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-@contextmanager
 def get_db() -> Iterator:
     db = SessionLocal()
     try:
