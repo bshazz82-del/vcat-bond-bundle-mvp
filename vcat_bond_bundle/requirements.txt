@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+sqlalchemy
+alembic
+pydantic
+pypdf
+reportlab
+boto3
+python-multipart
+python-dotenv
+stripe
+pytest
+streamlit
+requests
