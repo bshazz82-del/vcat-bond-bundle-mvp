@@ -5,7 +5,17 @@ from typing import Optional
 
 import streamlit as st
 import requests
-
+def safe_json(resp):
+    """Try to parse JSON; if not JSON, return a dict with useful debug info."""
+    try:
+        return safe_json(resp)
+    except Exception:
+        text = (resp.text or "").strip()
+        return {
+            "detail": f"Server did not return JSON (HTTP {resp.status_code}).",
+            "content_type": resp.headers.get("content-type", ""),
+            "body_preview": text[:1000],
+        }
 API_BASE = os.getenv("VCAT_BOND_BUNDLE_API_BASE", "http://localhost:8000")
 
 def main() -> None:
@@ -59,12 +69,12 @@ def main() -> None:
         }
         resp = requests.post(f"{API_BASE}/case", json=payload)
         if resp.status_code == 200:
-    st.session_state["case"] = resp.json()
+    st.session_state["case"] = safe_json(resp)
     st.success("Saved.")
 else:
     # Show real server error (so we can diagnose)
     try:
-        data = resp.json()
+        data = safe_json(resp)
         st.error(data.get("detail", f"Request failed (HTTP {resp.status_code})."))
     except Exception:
         st.error(f"Request failed (HTTP {resp.status_code}). Server said:\n\n{resp.text[:1000]}")
