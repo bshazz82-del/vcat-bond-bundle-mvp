@@ -57,33 +57,28 @@ def main() -> None:
         narrative = st.text_area("What happened? (short, factual)")
         orders_sought = st.text_area("What do you want VCAT to order?", value="Return the bond in full.")
         save_case = st.form_submit_button("Save")
+if save_case:
+    payload = {
+        "session_uuid": session_uuid,
+        "property_address": property_address,
+        "tenancy_end_date": tenancy_end_date.isoformat() + "T00:00:00",
+        "bond_amount": bond_amount,
+        "narrative": narrative,
+        "orders_sought": orders_sought,
+    }
 
-    if save_case:
-        payload = {
-            "session_uuid": session_uuid,
-            "property_address": property_address,
-            "tenancy_end_date": tenancy_end_date.isoformat() + "T00:00:00",
-            "bond_amount": bond_amount,
-            "narrative": narrative,
-            "orders_sought": orders_sought,
-        }
-        resp = requests.post(f"{API_BASE}/case", json=payload)
-        if resp.status_code == 200:
-    st.session_state["case"] = safe_json(resp)
-    st.success("Saved.")
-else:
-    err = safe_json(resp)
-    st.error(err.get("detail", f"Request failed (HTTP {resp.status_code})."))
-    try:
-        data = safe_json(resp)
-        st.error(data.get("detail", f"Request failed (HTTP {resp.status_code})."))
-    except Exception:
-        st.error(f"Request failed (HTTP {resp.status_code}). Server said:\n\n{resp.text[:1000]}")
+    resp = requests.post(f"{API_BASE}/case", json=payload)
 
-    case = st.session_state.get("case")
-    if not case:
-        st.stop()
+    if resp.status_code == 200:
+        st.session_state["case"] = safe_json(resp)
+        st.success("Saved.")
+    else:
+        err = safe_json(resp)
+        st.error(err.get("detail", f"Request failed (HTTP {resp.status_code})."))
 
+case = st.session_state.get("case")
+if not case:
+    st.stop()
     case_id = case["id"]
 
     st.header("Upload evidence")
