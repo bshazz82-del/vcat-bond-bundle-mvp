@@ -72,7 +72,8 @@ def main() -> None:
     st.session_state["case"] = safe_json(resp)
     st.success("Saved.")
 else:
-    # Show real server error (so we can diagnose)
+    err = safe_json(resp)
+    st.error(err.get("detail", f"Request failed (HTTP {resp.status_code})."))
     try:
         data = safe_json(resp)
         st.error(data.get("detail", f"Request failed (HTTP {resp.status_code})."))
