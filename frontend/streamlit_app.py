@@ -59,10 +59,15 @@ def main() -> None:
         }
         resp = requests.post(f"{API_BASE}/case", json=payload)
         if resp.status_code == 200:
-            st.session_state["case"] = resp.json()
-            st.success("Saved.")
-        else:
-            st.error(resp.json().get("detail", "Could not save."))
+    st.session_state["case"] = resp.json()
+    st.success("Saved.")
+else:
+    # Show real server error (so we can diagnose)
+    try:
+        data = resp.json()
+        st.error(data.get("detail", f"Request failed (HTTP {resp.status_code})."))
+    except Exception:
+        st.error(f"Request failed (HTTP {resp.status_code}). Server said:\n\n{resp.text[:1000]}")
 
     case = st.session_state.get("case")
     if not case:
