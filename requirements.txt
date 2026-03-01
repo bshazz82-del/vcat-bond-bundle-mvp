@@ -13,3 +13,4 @@ stripe
 pytest
 streamlit
 requests
+psycopg2-binary
