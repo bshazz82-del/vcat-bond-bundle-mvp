@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel, Field, ConfigDict
+
 
 class FileUploadResponse(BaseModel):
     file_id: int = Field(...)
     filename: str
     mime_type: str
+
 
 class CaseCreateRequest(BaseModel):
     session_uuid: str
@@ -17,7 +20,11 @@ class CaseCreateRequest(BaseModel):
     narrative: Optional[str] = None
     orders_sought: Optional[str] = None
 
+
 class CaseResponse(BaseModel):
+    # ✅ Pydantic v2 replacement for "orm_mode = True"
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     status: str
     created_at: datetime
@@ -27,6 +34,3 @@ class CaseResponse(BaseModel):
     bond_amount: Optional[str]
     narrative: Optional[str]
     orders_sought: Optional[str]
-
-    class Config:
-        orm_mode = True
