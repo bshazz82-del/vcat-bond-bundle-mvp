@@ -1,3 +1,7 @@
+from .db import engine
+from .models import Base
+
+Base.metadata.create_all(bind=engine)
 from __future__ import annotations
 import logging
 from fastapi import FastAPI
@@ -25,3 +29,7 @@ def create_app() -> FastAPI:
     return app
 
 app = create_app()
+from .db import engine
+from .models import Base
+
+Base.metadata.create_all(bind=engine)
